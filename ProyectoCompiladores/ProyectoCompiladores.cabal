@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      AFNep
       Lib
       Parser
       RE
