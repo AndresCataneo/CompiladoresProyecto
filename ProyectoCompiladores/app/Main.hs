@@ -1,9 +1,10 @@
-module Main where
+module Main (main) where
 
 import Parser
-import RE
+--import RE
+import AFNep
 import System.Environment (getArgs)
-import System.IO (readFile)
+--import System.IO (readFile)
 
 main :: IO ()
 main = do
@@ -15,4 +16,7 @@ main = do
             let ast = parseRE tokens
             putStrLn "ER resultante:"
             print ast
+            let afn = reToAFNEp ast
+            putStrLn "\nAFN-ε resultante:"
+            print afn
         _ -> putStrLn "Uso: compilador <archivo.txt>"

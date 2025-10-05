@@ -1,9 +1,9 @@
 
 -- EXPRESIONES REGULARES
-module RE (RE(..), stringToRE, alfabeto, digito, numNat, var, identif, entero, asignacion, operadorAri, operadorBool, 
+module RE (RE(..), stringToRE, digito, numNat, var, identif, entero, asignacion, operadorAri, operadorBool, 
     delimitadores, palabResReservadas, espaciosBlanco, componentesLexicos, comentarioLinea) where
 
-import Data.Set (toList, fromList)
+--import Data.Set (toList, fromList)
 
 --Abstraccion de RE
 data RE = Vacio
@@ -13,7 +13,6 @@ data RE = Vacio
         | Union RE RE
         | Estrella RE
         deriving (Eq)
-
 --Mostrar expresiones regulares (Version simple)
 {-
 instance Show RE where
@@ -52,15 +51,6 @@ stringToRE :: String -> RE
 stringToRE [] = Epsilon
 stringToRE [c] = Symbol c
 stringToRE (c:cs) = Concatena (Symbol c) (stringToRE cs)
-
---Funcion que obtiene el alfabeto de una expresion regular. Esto es para definir el alfabeto de nuestro lenguaje en el AFN-ε
-alfabeto :: RE -> [Char]
-alfabeto Vacio = []
-alfabeto Epsilon = []
-alfabeto (Symbol c) = [c]
-alfabeto (Concatena e1 e2) = toList $ fromList (alfabeto e1 ++ alfabeto e2)
-alfabeto (Union e1 e2) = toList $ fromList (alfabeto e1 ++ alfabeto e2)
-alfabeto (Estrella e) = alfabeto e
 
 --ER que representa los enteros positivos (0-9)
 digito :: RE
