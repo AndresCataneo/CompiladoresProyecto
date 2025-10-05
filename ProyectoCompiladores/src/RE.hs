@@ -13,16 +13,6 @@ data RE = Vacio
         | Union RE RE
         | Estrella RE
         deriving (Eq)
---Mostrar expresiones regulares (Version simple)
-{-
-instance Show RE where
-    show Vacio = "∅"
-    show Epsilon = "ε"
-    show (Symbol c) = [c]
-    show (Concatena e1 e2) = "(" ++ show e1 ++ show e2 ++ ")"
-    show (Union e1 e2) = "(" ++ show e1++ " U " ++ show e2 ++ ")"
-    show (Estrella e) = "(" ++ show e ++ ")*"
-    -}
 
 --Mostrar exp regulares (Eliminamos paréntesis innecesarios)
 instance Show RE where
