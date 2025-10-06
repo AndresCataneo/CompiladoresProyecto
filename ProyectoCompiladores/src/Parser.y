@@ -60,7 +60,7 @@ data Token
     deriving (Show)
 
 parseError :: [Token] -> a
-parseError _ = error "Error de parseo"
+parseError _ = errorWithoutStackTrace "Error de parseo. Se debe ingresar una expresión regular válida.\nEjemplos: ab, a+b, (a+b)*, a*, ε, \"\"."
 
 -- Convertir una cadena en una lista de tokens
 lexer :: String -> [Token]
