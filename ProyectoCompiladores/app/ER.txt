@@ -1,1 +1,1 @@
-ab(ab+ba)*
+ab(a+ba)*
