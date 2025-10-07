@@ -80,12 +80,8 @@ negatedRangeToRE c =
 lexer :: String -> [Token]
 lexer [] = []  
 lexer ('"' : '"' : cs) = TEmpty : lexer cs  -- "" → ε
-lexer (' ' : cs) = lexer cs                 
---lexer ('\n' : cs) = lexer cs        
+lexer (' ' : cs) = lexer cs                   
 lexer ('\r' : cs) = lexer cs        
---lexer ('\t' : cs) = lexer cs        
---lexer ('\n' : cs) = TChar '\n' : lexer cs  
---lexer ('\t' : cs) = TChar '\t' : lexer cs
 lexer ('(' : cs) = TLParen : lexer cs
 lexer (')' : cs) = TRParen : lexer cs
 lexer ('+' : cs) = TUnion : lexer cs

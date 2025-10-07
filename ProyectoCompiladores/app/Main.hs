@@ -1,11 +1,9 @@
 module Main (main) where
 
 import Parser
---import RE
 import AFNep
 import System.Environment (getArgs)
 import Data.List (intercalate, dropWhileEnd)
---import System.IO (readFile)
 
 main :: IO ()
 main = do

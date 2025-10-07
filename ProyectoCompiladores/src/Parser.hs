@@ -296,29 +296,27 @@ negatedRangeToRE c =
 lexer :: String -> [Token]
 lexer [] = []  
 lexer ('"' : '"' : cs) = TEmpty : lexer cs  -- "" → ε
-lexer (' ' : cs) = lexer cs                 -- Ignoramos espacios
---lexer ('\n' : cs) = lexer cs        -- Ignoramos saltos de línea
-lexer ('\r' : cs) = lexer cs        -- Ignoramos retornos de carro
---lexer ('\t' : cs) = lexer cs        -- Ignoramos tabs
---lexer ('\n' : cs) = TChar '\n' : lexer cs  
---lexer ('\t' : cs) = TChar '\t' : lexer cs
+lexer (' ' : cs) = lexer cs                   
+lexer ('\r' : cs) = lexer cs        
 lexer ('(' : cs) = TLParen : lexer cs
 lexer (')' : cs) = TRParen : lexer cs
 lexer ('+' : cs) = TUnion : lexer cs
 lexer ('*' : cs) = TKleene : lexer cs
 lexer ('ε' : cs) = TEpsilon : lexer cs
 lexer ('[' : c1 : '-' : c2 : ']' : cs) = 
---Rangos de caracteres [a-z], [0-9], etc.
+--Rangos de caracteres de [a-z], [0-9]
     TRange (rangeToRE c1 c2) : lexer cs
---Rangos negados [^a], [^b], etc.
--- Rangos negados [^a], [^\n], [^\t], etc.
+
+-- Rangos negados con caracteres escapados como [^n], [^ ]
 lexer ('[' : '^' : '\\' : esc : ']' : cs) =
     let c = case esc of
                 'n' -> '\n'
                 ' ' -> ' '
+                't' -> '\t'
                 _   -> esc
     in TRange (negatedRangeToRE c) : lexer cs
 
+-- Rangos negados simples como[^a], [^b]
 lexer ('[' : '^' : c : ']' : cs) =
     TRange (negatedRangeToRE c) : lexer cs
 
