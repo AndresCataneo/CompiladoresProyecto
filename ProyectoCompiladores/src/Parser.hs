@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -w #-}
 module Parser where
 import RE
+import Data.Char (chr)
 import qualified Data.Array as Happy_Data_Array
 import qualified Data.Bits as Bits
 import Control.Applicative(Applicative(..))
@@ -18,18 +19,18 @@ data HappyAbsSyn t4 t5 t6 t7 t8
 	| HappyAbsSyn8 t8
 
 happyExpList :: Happy_Data_Array.Array Prelude.Int Prelude.Int
-happyExpList = Happy_Data_Array.listArray (0,30) ([28928,28928,1024,28928,0,2048,28928,0,0,0,0,1536,0,0,28928,28928,0,0
+happyExpList = Happy_Data_Array.listArray (0,32) ([61696,57856,4097,34816,7,0,16385,60,0,0,0,0,0,96,0,0,30848,61696,0,0,0
 	])
 
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_parseRE","S","Exp","Term","Factor","Atom","'('","')'","'+'","'*'","'\949'","emptyStr","char","%eof"]
-        bit_start = st Prelude.* 16
-        bit_end = (st Prelude.+ 1) Prelude.* 16
+  where token_strs = ["error","%dummy","%start_parseRE","S","Exp","Term","Factor","Atom","'('","')'","'+'","'*'","'\949'","emptyStr","char","range","%eof"]
+        bit_start = st Prelude.* 17
+        bit_end = (st Prelude.+ 1) Prelude.* 17
         read_bit = readArrayBit happyExpList
         bits = Prelude.map read_bit [bit_start..bit_end Prelude.- 1]
-        bits_indexed = Prelude.zip bits [0..15]
+        bits_indexed = Prelude.zip bits [0..16]
         token_strs_expected = Prelude.concatMap f bits_indexed
         f (Prelude.False, _) = []
         f (Prelude.True, nr) = [token_strs Prelude.!! nr]
@@ -38,7 +39,8 @@ action_0 (9) = happyShift action_6
 action_0 (13) = happyShift action_7
 action_0 (14) = happyShift action_8
 action_0 (15) = happyShift action_9
-action_0 (4) = happyGoto action_10
+action_0 (16) = happyShift action_10
+action_0 (4) = happyGoto action_11
 action_0 (5) = happyGoto action_2
 action_0 (6) = happyGoto action_3
 action_0 (7) = happyGoto action_4
@@ -49,33 +51,36 @@ action_1 (9) = happyShift action_6
 action_1 (13) = happyShift action_7
 action_1 (14) = happyShift action_8
 action_1 (15) = happyShift action_9
+action_1 (16) = happyShift action_10
 action_1 (5) = happyGoto action_2
 action_1 (6) = happyGoto action_3
 action_1 (7) = happyGoto action_4
 action_1 (8) = happyGoto action_5
 action_1 _ = happyFail (happyExpListPerState 1)
 
-action_2 (11) = happyShift action_14
+action_2 (11) = happyShift action_15
 action_2 _ = happyReduce_1
 
 action_3 (9) = happyShift action_6
 action_3 (13) = happyShift action_7
 action_3 (14) = happyShift action_8
 action_3 (15) = happyShift action_9
-action_3 (7) = happyGoto action_13
+action_3 (16) = happyShift action_10
+action_3 (7) = happyGoto action_14
 action_3 (8) = happyGoto action_5
 action_3 _ = happyReduce_4
 
 action_4 _ = happyReduce_6
 
-action_5 (12) = happyShift action_12
+action_5 (12) = happyShift action_13
 action_5 _ = happyReduce_8
 
 action_6 (9) = happyShift action_6
 action_6 (13) = happyShift action_7
 action_6 (14) = happyShift action_8
 action_6 (15) = happyShift action_9
-action_6 (5) = happyGoto action_11
+action_6 (16) = happyShift action_10
+action_6 (5) = happyGoto action_12
 action_6 (6) = happyGoto action_3
 action_6 (7) = happyGoto action_4
 action_6 (8) = happyGoto action_5
@@ -87,35 +92,39 @@ action_8 _ = happyReduce_11
 
 action_9 _ = happyReduce_12
 
-action_10 (16) = happyAccept
-action_10 _ = happyFail (happyExpListPerState 10)
+action_10 _ = happyReduce_13
 
-action_11 (10) = happyShift action_16
-action_11 (11) = happyShift action_14
+action_11 (17) = happyAccept
 action_11 _ = happyFail (happyExpListPerState 11)
 
-action_12 _ = happyReduce_7
+action_12 (10) = happyShift action_17
+action_12 (11) = happyShift action_15
+action_12 _ = happyFail (happyExpListPerState 12)
 
-action_13 _ = happyReduce_5
+action_13 _ = happyReduce_7
 
-action_14 (9) = happyShift action_6
-action_14 (13) = happyShift action_7
-action_14 (14) = happyShift action_8
-action_14 (15) = happyShift action_9
-action_14 (6) = happyGoto action_15
-action_14 (7) = happyGoto action_4
-action_14 (8) = happyGoto action_5
-action_14 _ = happyFail (happyExpListPerState 14)
+action_14 _ = happyReduce_5
 
 action_15 (9) = happyShift action_6
 action_15 (13) = happyShift action_7
 action_15 (14) = happyShift action_8
 action_15 (15) = happyShift action_9
-action_15 (7) = happyGoto action_13
+action_15 (16) = happyShift action_10
+action_15 (6) = happyGoto action_16
+action_15 (7) = happyGoto action_4
 action_15 (8) = happyGoto action_5
-action_15 _ = happyReduce_3
+action_15 _ = happyFail (happyExpListPerState 15)
 
-action_16 _ = happyReduce_9
+action_16 (9) = happyShift action_6
+action_16 (13) = happyShift action_7
+action_16 (14) = happyShift action_8
+action_16 (15) = happyShift action_9
+action_16 (16) = happyShift action_10
+action_16 (7) = happyGoto action_14
+action_16 (8) = happyGoto action_5
+action_16 _ = happyReduce_3
+
+action_17 _ = happyReduce_9
 
 happyReduce_1 = happySpecReduce_1  4 happyReduction_1
 happyReduction_1 (HappyAbsSyn5  happy_var_1)
@@ -203,8 +212,15 @@ happyReduction_12 (HappyTerminal (TChar happy_var_1))
 	)
 happyReduction_12 _  = notHappyAtAll 
 
+happyReduce_13 = happySpecReduce_1  8 happyReduction_13
+happyReduction_13 (HappyTerminal (TRange happy_var_1))
+	 =  HappyAbsSyn8
+		 (happy_var_1
+	)
+happyReduction_13 _  = notHappyAtAll 
+
 happyNewToken action sts stk [] =
-	action 16 16 notHappyAtAll (HappyState action) sts stk []
+	action 17 17 notHappyAtAll (HappyState action) sts stk []
 
 happyNewToken action sts stk (tk:tks) =
 	let cont i = action i i tk (HappyState action) sts stk tks in
@@ -216,10 +232,11 @@ happyNewToken action sts stk (tk:tks) =
 	TEpsilon -> cont 13;
 	TEmpty -> cont 14;
 	TChar happy_dollar_dollar -> cont 15;
+	TRange happy_dollar_dollar -> cont 16;
 	_ -> happyError' ((tk:tks), [])
 	}
 
-happyError_ explist 16 tk tks = happyError' (tks, explist)
+happyError_ explist 17 tk tks = happyError' (tks, explist)
 happyError_ explist _ tk tks = happyError' ((tk:tks), explist)
 
 newtype HappyIdentity a = HappyIdentity a
@@ -259,25 +276,59 @@ data Token
     | TEpsilon
     | TEmpty      -- ""
     | TChar Char
+    | TRange RE
     deriving (Show)
 
 parseError :: [Token] -> a
 parseError _ = errorWithoutStackTrace "Error de parseo. Se debe ingresar una expresión regular válida.\nEjemplos: ab, a+b, (a+b)*, a*, ε, \"\"."
 
+rangeToRE :: Char -> Char -> RE
+rangeToRE start end = foldr1 Union (map Symbol [start..end])
+
+negatedRangeToRE :: Char -> RE
+negatedRangeToRE c = 
+    let allPrintable = [chr 9, chr 10] ++ [chr 32 .. chr 126] 
+        validChars = filter (/= c) allPrintable
+    in foldr1 Union (map Symbol validChars)
+
+
 -- Convertir una cadena en una lista de tokens
 lexer :: String -> [Token]
 lexer [] = []  
 lexer ('"' : '"' : cs) = TEmpty : lexer cs  -- "" → ε
-lexer (' ' : cs) = lexer cs                 -- Ignoramos espacios
+lexer (' ' : cs) = lexer cs                   
+lexer ('\r' : cs) = lexer cs        
 lexer ('(' : cs) = TLParen : lexer cs
 lexer (')' : cs) = TRParen : lexer cs
 lexer ('+' : cs) = TUnion : lexer cs
 lexer ('*' : cs) = TKleene : lexer cs
 lexer ('ε' : cs) = TEpsilon : lexer cs
+lexer ('[' : c1 : '-' : c2 : ']' : cs) = 
+--Rangos de caracteres de [a-z], [0-9]
+    TRange (rangeToRE c1 c2) : lexer cs
+
+-- Rangos negados con caracteres escapados como [^n], [^ ]
+lexer ('[' : '^' : '\\' : esc : ']' : cs) =
+    let c = case esc of
+                'n' -> '\n'
+                ' ' -> ' '
+                't' -> '\t'
+                _   -> esc
+    in TRange (negatedRangeToRE c) : lexer cs
+
+-- Rangos negados simples como[^a], [^b]
+lexer ('[' : '^' : c : ']' : cs) =
+    TRange (negatedRangeToRE c) : lexer cs
 
 -- operadores escapados
 lexer ('\\' : '+' : cs) = TChar '+' : lexer cs
 lexer ('\\' : '*' : cs) = TChar '*' : lexer cs
+lexer ('\\' : '(' : cs) = TChar '(' : lexer cs
+lexer ('\\' : ')' : cs) = TChar ')' : lexer cs
+lexer ('\\' : ' ' : cs) = TChar ' ' : lexer cs
+lexer ('\\' : 'n' : cs) = TChar '\n' : lexer cs
+lexer ('\\' : 't' : cs) = TChar '\t' : lexer cs
+lexer ('\\' : '=' : cs) = TChar '=' : lexer cs
 
 -- cualquier otro caracter lo consideramos un símbolo
 lexer (c : cs) = TChar c : lexer cs
