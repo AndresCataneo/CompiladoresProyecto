@@ -32,6 +32,10 @@ instance Show RE where
 showPrec :: Int -> RE -> String
 showPrec _ Vacio = "∅"
 showPrec _ Epsilon = "ε"
+showPrec _ (Symbol ' ') = " "                    -- Mostrar espacio
+showPrec _ (Symbol '\n') = "\\n"                 -- Mostrar \n
+showPrec _ (Symbol '\t') = "\\t"                 -- Mostrar \t  
+showPrec _ (Symbol '\r') = "\\r"                 -- Mostrar \r
 showPrec _ (Symbol c) = [c]
 
 showPrec p (Concatena e1 e2) =
@@ -82,7 +86,7 @@ operadorAri = Union (Symbol '+') (Union (Symbol '-') (Union (Symbol '*') (Symbol
 
 --Expresiones booleanas 
 operadorBool :: RE
-operadorBool= Union (Union (Symbol '&') (Symbol '|')) (Union (Symbol '!') (Union (Concatena (Symbol '=') (Symbol '=')) (Union (stringToRE "true") (stringToRE "false"))))
+operadorBool= Union (Union (Symbol '&') (Symbol '|')) (Union (Symbol '!') (Union (Concatena (Symbol '=') (Symbol '=')) (Union (Concatena (Symbol '<') (Symbol '='))(Union (stringToRE "true") (stringToRE "false")))))
 
 --ER de Delimitadores. ; tiene dos usos, uno como fin de instruccion y otro como operador de secuencia de instrucciones. Esto se maneja en el analizador sintactico
 delimitadores :: RE
@@ -98,8 +102,8 @@ espaciosBlanco = Estrella (Union (Symbol ' ') (Union (Symbol '\n') (Symbol '\t')
 
 --Funcion auxiliar que define todo nuestos componentes lexicos 
 componentesLexicos :: RE
-componentesLexicos = Estrella(Union (var) (Union (digito) (Union (entero) (Union (asignacion) (Union (operadorAri) (Union (operadorBool) (Union (delimitadores) (Union (palabResReservadas) (espaciosBlanco)))))))))
+componentesLexicos = Union (var) (Union (digito) (Union (entero) (Union (asignacion) (Union (operadorAri) (Union (operadorBool) (Union (delimitadores) (Union (palabResReservadas) (espaciosBlanco))))))))
 
 --ER de comentarios donde empieza con /* y terminan con */
 comentarioLinea :: RE
-comentarioLinea = Concatena (stringToRE "/*") (Concatena (componentesLexicos) (stringToRE "*/"))
+comentarioLinea = Concatena (stringToRE "/*") (Concatena (Estrella componentesLexicos) (stringToRE "*/"))
