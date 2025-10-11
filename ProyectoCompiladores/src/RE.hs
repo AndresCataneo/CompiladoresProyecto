@@ -34,9 +34,3 @@ showPrec p (Union e1 e2) =
 showPrec p (Estrella e) =
     let s = showPrec 3 e ++ "*"
     in if p > 2 then "(" ++ s ++ ")" else s
-
---Funcion que transfroma una cadena en una expresion regular de concatenaciones
-stringToRE :: String -> RE
-stringToRE [] = Epsilon
-stringToRE [c] = Symbol c
-stringToRE (c:cs) = Concatena (Symbol c) (stringToRE cs)
