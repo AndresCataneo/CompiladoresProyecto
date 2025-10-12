@@ -1,4 +1,4 @@
-module AFN (AFN(..), eliminarEpsilon, epsilonclosure) where
+module AFN (AFN(..), eliminarEpsilon, epsilonClosure) where
 
 import AFNep
 import qualified Data.Set as Set
@@ -8,13 +8,13 @@ import Data.Maybe (fromMaybe)
 Definición del tipo AFN sin transiciones epsilon
 -}
 
-type Transicion = (Int, Char, [Int])
+type Transiciones = (Int, Char, [Int])
 
 data AFN = AFN
     {
         estadoAfn :: [Int],
         alfabetoAfn :: [Char],
-        transiciones :: [Transicion],
+        transiciones :: [Transiciones],
         inicialAfn :: Int, 
         finalesAfn :: [Int]
     } deriving (Show)
@@ -27,15 +27,30 @@ usando cero o más transiciones epsilon
 -}
 
 epsilonClosure :: AFNEp -> [Int] -> [Int]
-epsilonClosure afn estados = Set.toList (cerrar Set.empty estados)
+epsilonClosure afn estados = Set.toList (close Set.empty estados)
     where 
         close visitados [] = visitados
         close visitados (x:xs)
             | x `Set.member` visitados = close visitados xs --Si x ya fue visitado pasa a xs
-            | otherwise
+            | otherwise =
                 let dstConEpsilon = [estDestino
-                                | (estOrigen, Nothing, estsDestino) <- transiciones afn, --recorre los estados y agarra las que son epsilon
-                                estOrigen == x,
-                                estDestino <- estsDestino
-                                ]
+                                    | (estOrigen, Nothing, estsDestino) <- transiciones afn, --recorre los estados y agarra las que son epsilon
+                                    estOrigen == x,
+                                    estDestino <- estsDestino
+                                    ]
                 in close (Set.insert x visitados) ( dstConEpsilon ++ xs)
+
+{-
+Función para construir el AFN(Sin transiciones epsilon)
+-}
+
+construirAFN :: AFNEp -> [Transiciones] -> [Int] -> AFN
+construirAFN afnEP trans finales' = AFN
+    {estadosAfn = estados afnEP,
+     alfabetoAfn = alfabetoAfn,
+     transicionesAfn = trans,
+     inicialAfn = inicial afnEP,
+     finalesAfn = finales'
+     }
+
+eliminarEpsilonTrans :: AFNEp ->
