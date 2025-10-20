@@ -1,4 +1,4 @@
-module AFN (AFN(..), eliminarEpsilon, epsilonClosure) where
+module AFN (AFN(..), eliminarEpsilonTrans, epsilonClosure) where
 
 import AFNep
 import qualified Data.Set as Set
@@ -14,7 +14,7 @@ data AFN = AFN
     {
         estadosAfn :: [Int],
         alfabetoAfn :: [Char],
-        transiciones :: [Transiciones],
+        transicionesAfn :: [Transiciones],
         inicialAfn :: Int, 
         finalesAfn :: [Int]
     } deriving (Show)
@@ -27,7 +27,7 @@ usando cero o más transiciones epsilon
 -}
 
 epsilonClosure :: AFNEp -> [Int] -> [Int]
-epsilonClosure afn estados = Set.toList (close Set.empty estados)
+epsilonClosure afn conjEstados = Set.toList (close Set.empty conjEstados)
     where 
         close visitados [] = visitados
         close visitados (x:xs)
@@ -49,11 +49,11 @@ y finalmente otra closure sobre los estados alcanzados.
 -}
 
 construirAFN :: AFNEp -> [Transiciones] -> [Int] -> AFN
-construirAFN afnEP trans finales' = AFN
-    {estadosAfn = estados afnEP,
-     alfabetoAfn = alfabetoAfn,
+construirAFN afnEp trans finales' = AFN
+    {estadosAfn = estados afnEp,
+     alfabetoAfn = alfabeto afnEp,
      transicionesAfn = trans,
-     inicialAfn = inicial afnEP,
+     inicialAfn = inicial afnEp,
      finalesAfn = finales'
      }
 
