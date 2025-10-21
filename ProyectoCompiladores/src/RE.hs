@@ -1,4 +1,4 @@
-module RE (RE(..), stringToRE) where
+module RE (RE(..)) where
 
 --Abstraccion de RE
 data RE = Vacio
