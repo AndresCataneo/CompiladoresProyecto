@@ -1,6 +1,6 @@
 # ProyectoCompiladores
 
-### Integrantes:
+## Integrantes:
 -
 -
 -
