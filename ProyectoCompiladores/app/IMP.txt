@@ -6,5 +6,3 @@ OpBool = (& + | + ! + \=\= + <\= + true + false)
 PalabRes = (if + else + then + while + for)
 Delimitadores = ({ + } + \( + \) + ;)
 Espacios = (\ + \n + \t)*
-ComenBloque = (/\* ([^*] + (\*[^/]))* \*/)
-ComenLinea = (// [^\n]* \n)

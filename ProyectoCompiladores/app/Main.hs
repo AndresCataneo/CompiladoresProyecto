@@ -22,6 +22,8 @@ main = do
             let afne = reToAFNEp ast
             putStrLn "AFNe resultante:"
             print afne 
+            putStrLn "El numero de estados del AFNe es:"
+            print (length (estados afne))
             let afn = eliminarEpsilonTrans afne
             putStrLn "AFN resultante:"
             print afn --lo que tarda es imprimir, pero no el cálculo
