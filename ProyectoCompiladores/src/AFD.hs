@@ -1,4 +1,4 @@
-module AFD (AFD(..), acepta, afnToAfd) where
+module AFD (AFD(..), acepta, afnToAfd, transita, siguienteEstado) where
 
 -- Importamos 'transicionesAfn' que es el nombre correcto del campo en AFN.hs
 import AFN (AFN(..), transicionesAfn)
