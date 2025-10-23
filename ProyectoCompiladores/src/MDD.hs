@@ -12,6 +12,13 @@ import AFD (AFD(..), transita, acepta)
 --         final :: [Estado]}
 --         deriving (Show)
 
+data Token = Id String
+                | Entero Int
+                | Asignacion 
+                | OpArit Char
+                | OpBool 
+                deriving (Show)
+
 
 
 ultimoEstado :: AFD -> String -> Int
