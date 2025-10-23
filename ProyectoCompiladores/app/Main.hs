@@ -4,6 +4,8 @@ import Parser
 import AFNep
 import System.Environment (getArgs)
 import Data.List (intercalate, dropWhileEnd)
+import AFN
+import AFD
 
 main :: IO ()
 main = do
@@ -16,9 +18,15 @@ main = do
             let ast = parseRE tokens
             putStrLn "ER resultante:"
             print ast
-            let afn = reToAFNEp ast
-            putStrLn "\nAFN-ε resultante:"
-            print afn
+            let afne = reToAFNEp ast
+            putStrLn "AFNe resultante:"
+            print afne 
+            let afn = eliminarEpsilonTrans afne
+            putStrLn "AFN resultante:"
+            print afn --lo que tarda es imprimir, pero no el cálculo
+            let afd = afnToAfd afn
+            putStrLn "\nAFD no min resultante:"
+            print afd
         _ -> putStrLn "Uso: compilador <archivo.txt>"
 
 -- Función auxiliar que elimina espacios en blanco al inicio y final de cada línea
