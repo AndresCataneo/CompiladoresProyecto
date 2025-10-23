@@ -16,3 +16,8 @@ data Token = Id String
 
 lexer :: String -> [Token]
 lexer _ = []
+
+auxLexer :: 
+
+armaMDD :: RE -> MDD
+armaMDD _ = MDD{}
