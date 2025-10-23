@@ -26,8 +26,10 @@ source-repository head
 library
   exposed-modules:
       AFD
+      AFDmin
       AFN
       AFNep
+      Lexer
       Lib
       MDD
       Parser

@@ -6,6 +6,7 @@ import System.Environment (getArgs)
 import Data.List (intercalate, dropWhileEnd)
 import AFN
 import AFD
+import AFDmin
 
 main :: IO ()
 main = do
@@ -27,6 +28,9 @@ main = do
             let afd = afnToAfd afn
             putStrLn "\nAFD no min resultante:"
             print afd
+            let afdmin = minimizarAFD afd
+            putStrLn "\nAFD min resultante:"
+            print afdmin
         _ -> putStrLn "Uso: compilador <archivo.txt>"
 
 -- Función auxiliar que elimina espacios en blanco al inicio y final de cada línea
