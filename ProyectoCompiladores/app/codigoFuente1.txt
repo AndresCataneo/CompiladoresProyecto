@@ -1,0 +1,34 @@
+// Programa de ejemplo que cumple las regex dadas
+
+{ 
+  // variables (Ids según: [a-z]+[A-Z])
+  sumB := 0;
+  nC := 10;
+  iA := 0;
+  flagD := true;
+
+  // ciclo for: acumulador de 0 a nC
+  for (iA := 0; iA <= nC; iA := iA + 1) {
+    sumB := sumB + iA;
+  }
+
+  // uso de if/then/else con operadores booleanos y comparaciones
+  if (sumB == 55 & flagD == true) then {
+    // comentario: mostramos resultado si la condición es verdadera
+    resultadoE := sumB;
+  } else {
+    resultadoE := -1;
+  }
+
+  // while con operador lógico NOT (!)
+  contadorF := 5;
+  while (contadorF > 0) {
+    contadorF := contadorF - 1;
+    flagD := !flagD;
+  }
+
+  // operación aritmética mixta
+  valorG := (resultadoE * 2) / (nC + 1);
+
+  // fin del bloque
+}
