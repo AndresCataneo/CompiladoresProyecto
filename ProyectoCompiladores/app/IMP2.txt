@@ -1,2 +1,3 @@
-Id = ([a-z]+[A-Z]([a-z]+[A-Z]+[0-9])*)
-
+Id = a + b + c
+Asignacion = (:\=)
+OpArit = (\+ + \- + \* + \/)

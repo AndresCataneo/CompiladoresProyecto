@@ -113,7 +113,8 @@ lexer ('\\' : ' ' : cs) = TChar ' ' : lexer cs
 lexer ('\\' : 'n' : cs) = TChar '\n' : lexer cs
 lexer ('\\' : 't' : cs) = TChar '\t' : lexer cs
 lexer ('\\' : '=' : cs) = TChar '=' : lexer cs
-
+lexer ('\\' : '-' : cs) = TChar '-' : lexer cs
+lexer ('\\' : '/' : cs) = TChar '/' : lexer cs
 -- cualquier otro caracter lo consideramos un símbolo
 lexer (c : cs) = TChar c : lexer cs
 }
