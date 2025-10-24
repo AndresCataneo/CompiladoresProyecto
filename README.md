@@ -1,11 +1,11 @@
 # ProyectoCompiladores
 
 ## Integrantes:
--
--
--
--
--
+- Cataneo Tortolero Andrés Rodrigo
+- Frías Domínguez Oscar Fernando 
+- Ortiz Cervantes Leonardo Rafael
+- Torres Nava Hazel
+- Victoria Morales Ricardo Maximiliano
 
 ## Requisitos
 - Stack
