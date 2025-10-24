@@ -8,24 +8,24 @@ type Transicion = (Estado, Char, Estado)
 
 data MDD = MDD
     {
-        estados :: [Estado],
-        alfabeto :: [Char],
-        transiciones :: [Transicion],
-        inicial :: Estado,
-        finales :: [Estado],
-        finalesConEtiquetas :: [(Estado, Etiqueta)]  
+        estadosMDD :: [Estado],
+        alfabetoMDD :: [Char],
+        transicionesMDD :: [Transicion],
+        inicialMDD :: Estado,
+        finalesMDD :: [Estado],
+        finalesConEtiquetasMDD :: [(Estado, Etiqueta)]  
     } deriving (Show)
 
 
 construyeMDD :: AFD -> MDD
 construyeMDD afd = MDD 
                 {
-                estados = estadosAfd afd,
-                alfabeto = alfabetoAfd afd,
-                transiciones = transicionesAfd afd,
-                inicial = inicialAfd afd,
-                finales = finalesAfd afd,
-                finalesConEtiquetas = asignaEtiquetas afd
+                estadosMDD = estadosAfd afd,
+                alfabetoMDD = alfabetoAfd afd,
+                transicionesMDD = transicionesAfd afd,
+                inicialMDD = inicialAfd afd,
+                finalesMDD = finalesAfd afd,
+                finalesConEtiquetasMDD = asignaEtiquetas afd
                 }
 
 asignaEtiquetas :: AFD -> [(Estado, Etiqueta)]
@@ -47,26 +47,4 @@ asignaEtiquetas afd =
             | otherwise         = error "Esto no deberia pasar. Un estado final no debería ser final, al menos para IMP."
     in
         map asignarEtiqueta (finalesAfd afd)    
-
-
-
-
-
--- type Estado = Int
--- type Trans = (Estado, Char, Estado)
-
--- data AFD = AFD {estados :: [Estado], 
---         alfabeto :: [Char], 
---         transiciones :: [Trans], 
---         inicial :: Estado, 
---         final :: [Estado]}
---         deriving (Show)
-
-
--- ultimoEstado :: AFD -> String -> Int
--- ultimoEstado afd s = if acepta afd s then
---                 transita (transicionesAfd afd) (inicialAfd afd) s
---                 else -1
-
--- data MDD = MDD {}
---         deriving (Show)
+        

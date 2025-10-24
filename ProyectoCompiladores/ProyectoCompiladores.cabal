@@ -29,6 +29,7 @@ library
       AFDmin
       AFN
       AFNep
+      Lexer
       Lib
       MDD
       Parser
