@@ -7,33 +7,90 @@ import Data.List (intercalate, dropWhileEnd)
 import AFN
 import AFD
 import AFDmin
+import Lexer (armaMDD, lexer)
 
 main :: IO ()
 main = do
     args <- getArgs
     case args of
-        [filename] -> do
-            contenido <- readFile filename
-            let preproc = preprocesar contenido
-            let tokens = lexer preproc
+        [filenameER, filenameInput] -> do
+            -- Leer el archivo con las expresiones regulares
+            contenidoER <- readFile filenameER
+            let preproc = preprocesar contenidoER
+            let tokens = Parser.lexer preproc  -- lexer del parser (para la ER)
             let ast = parseRE tokens
             putStrLn "ER resultante:"
             print ast
+            
+            let afne = reToAFNEp ast
+            putStrLn "\nAFNe resultante:"
+            print afne 
+            putStrLn "El numero de estados del AFNe es:"
+            print (length (estados afne))
+            
+            let afn = eliminarEpsilonTrans afne
+            putStrLn "\nAFN resultante:"
+            print afn
+            
+            let afd = afnToAfd afn
+            putStrLn "\nAFD no min resultante:"
+            print afd
+            
+            let afdmin = minimizarAFD afd
+            putStrLn "\nAFD min resultante:"
+            print afdmin
+            
+            -- Construir el MDD
+            let mdd = armaMDD ast
+            putStrLn "\nMDD resultante:"
+            print mdd
+            
+            -- Leer el archivo de entrada (código a tokenizar)
+            codigoFuente <- readFile filenameInput
+            putStrLn "\n========================================="
+            putStrLn "Código fuente a tokenizar:"
+            putStrLn "========================================="
+            putStrLn codigoFuente
+            putStrLn "========================================="
+            
+            -- Aplicar el lexer al código fuente
+            let tokensResultado = Lexer.lexer codigoFuente mdd
+            putStrLn "\nTokens reconocidos:"
+            putStrLn "========================================="
+            mapM_ print tokensResultado
+            
+        [filename] -> do
+            -- Modo original: solo procesar las expresiones regulares
+            contenido <- readFile filename
+            let preproc = preprocesar contenido
+            let tokens = Parser.lexer preproc
+            let ast = parseRE tokens
+            putStrLn "ER resultante:"
+            print ast
+            
             let afne = reToAFNEp ast
             putStrLn "AFNe resultante:"
             print afne 
             putStrLn "El numero de estados del AFNe es:"
             print (length (estados afne))
+            
             let afn = eliminarEpsilonTrans afne
             putStrLn "AFN resultante:"
-            print afn --lo que tarda es imprimir, pero no el cálculo
+            print afn
+            
             let afd = afnToAfd afn
             putStrLn "\nAFD no min resultante:"
             print afd
+            
             let afdmin = minimizarAFD afd
             putStrLn "\nAFD min resultante:"
             print afdmin
-        _ -> putStrLn "Uso: compilador <archivo.txt>"
+            
+            let mdd = armaMDD ast
+            putStrLn "\nMDD resultante:"
+            print mdd
+            
+        _ -> putStrLn "Uso:\n  compilador <archivoER.txt>  # Solo procesar ER\n  compilador <archivoER.txt> <archivoInput.txt>  # Procesar ER y tokenizar"
 
 -- Función auxiliar que elimina espacios en blanco al inicio y final de cada línea
 trim :: String -> String
