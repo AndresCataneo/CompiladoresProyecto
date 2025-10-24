@@ -90,7 +90,11 @@ crearToken estadoFinal lexema mdd =
     case lookup estadoFinal (finalesConEtiquetasMDD mdd) of
         Nothing -> error $ "Estado final sin etiqueta: " ++ show estadoFinal
         Just etiqueta -> case etiqueta of
-            "Id" -> Id lexema --if lexema == if then (palabreservada, lexema) else if  lexema == else then (palabreservada, else)| ... else Id lexema. Eso solo en caso de tener que usar precendencia.
+            "Id" -> 
+                -- Verificamos si es una palabra reservada
+                if lexema `elem` palabrasReservadas
+                then PalabRes lexema
+                else Id lexema
             "Entero" -> Entero (read lexema)
             "Asignacion" -> Asignacion
             "OpArit" -> case lexema of
@@ -105,3 +109,7 @@ crearToken estadoFinal lexema mdd =
             "ComenBloque" -> ComenBloque lexema
             "ComenLinea" -> ComenLinea lexema
             _ -> error $ "Etiqueta desconocida: " ++ etiqueta
+
+-- Lista de palabras reservadas del lenguaje IMP
+palabrasReservadas :: [String]
+palabrasReservadas = ["if", "then", "else", "while", "for"]
