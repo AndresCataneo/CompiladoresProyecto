@@ -31,18 +31,14 @@ afnToAfd afn =
         (edoFinales, transFinales) = construirAFD afn [q0] [(q0, 0)] []
 
         --Los estados finales del AFD son aquellos conjuntos que contienen al menos un estado final del AFN
-        finales =
-            [ afdId
-            | (afnEstados, afdId) <- edoFinales
-            , any (`elem` finalesAfn afn) afnEstados
-            ]
+        finales =[ afdId | (afnEstados, afdId) <- edoFinales, any (`elem` finalesAfn afn) afnEstados]
     in
         AFD
-        { estadosAfd      = sort $ map snd edoFinales --Tomamos los ids de los conjuntos de estados
-        , alfabetoAfd     = alfabetoAfn afn
-        , transicionesAfd = transFinales
-        , inicialAfd      = 0
-        , finalesAfd      = sort finales
+        { estadosAfd      = sort $ map snd edoFinales, --Tomamos los ids de los conjuntos de estados
+        alfabetoAfd     = alfabetoAfn afn,
+        transicionesAfd = transFinales,
+        inicialAfd      = 0,
+        finalesAfd      = sort finales
         }
 
 {--
