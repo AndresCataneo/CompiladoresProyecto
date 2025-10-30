@@ -6,7 +6,9 @@ import AFN
 import AFD
 import AFDmin
 import MDD
+import Debug.Trace (trace)
        
+
 data Token = Id String
         | Entero Int
         | Asignacion 
@@ -14,7 +16,7 @@ data Token = Id String
         | OpBool String
         | PalabRes String
         | Delimitadores Char
-        | Espacios String
+        | Espacios Char
         | ComenBloque String
         | ComenLinea String
         deriving (Show, Eq)
@@ -95,21 +97,44 @@ crearToken estadoFinal lexema mdd =
                 if lexema `elem` palabrasReservadas
                 then PalabRes lexema
                 else Id lexema
-            "Entero" -> Entero (read lexema)
-            "Asignacion" -> Asignacion
-            "OpArit" -> case lexema of
-                (c:_) -> OpArit c
-                [] -> error "OpArit: lexema vacío"
-            "OpBool" -> OpBool lexema
-            "PalabRes" -> PalabRes lexema
-            "Delimitadores" -> case lexema of
-                (c:_) -> Delimitadores c
-                [] -> error "Delimitadores: lexema vacío"
-            "Espacios" -> Espacios lexema
-            "ComenBloque" -> ComenBloque lexema
-            "ComenLinea" -> ComenLinea lexema
+            "Entero" -> 
+                if lexema `elem` operadoresBooleanos then OpBool lexema
+                else if lexema == ":=" then Asignacion 
+                else if length lexema == 1 && miHead lexema `elem` delimitadores then Delimitadores (miHead lexema)
+                else if length lexema == 1 && miHead lexema `elem` identificadoresDeEaZ then Id lexema
+                else Entero (read (trace ("Lexema: " ++ lexema) lexema))
+            "OpArit" -> 
+                if length lexema == 1 && miHead lexema `elem` espacios then Espacios (miHead lexema)
+                else if lexema `elem` operadoresBooleanos then OpBool lexema
+                else if length lexema == 1 && miHead lexema `elem` delimitadores then Delimitadores (miHead lexema)
+                else OpArit (miHead lexema) 
+            -- "OpBool" -> OpBool lexema
+            -- "PalabRes" -> PalabRes lexema
+            -- "Delimitadores" -> case lexema of
+            --     (c:_) -> Delimitadores c
+            --     [] -> error "Delimitadores: lexema vacío"
+            -- "Espacios" -> Espacios lexema
+            -- "ComenBloque" -> ComenBloque lexema
+            -- "ComenLinea" -> ComenLinea lexema
             _ -> error $ "Etiqueta desconocida: " ++ etiqueta
 
 -- Lista de palabras reservadas del lenguaje IMP
 palabrasReservadas :: [String]
 palabrasReservadas = ["if", "then", "else", "while", "for"]
+
+-- Lista de operadores booleanos del lenguaje IMP
+operadoresBooleanos :: [String]
+operadoresBooleanos = ["<=", ">=", "<", ">", "==", "|", "&", "!"]  --algunos son extras por si las dudas
+
+delimitadores :: [Char]
+delimitadores = [';', '(', ')', '{', '}']
+
+espacios :: [Char]
+espacios = [' ', '\t', '\n']
+
+identificadoresDeEaZ :: [Char]
+identificadoresDeEaZ = ['e'..'z'] 
+
+miHead :: [a] -> a
+miHead []     = error "Error: se intentó obtener el primer elemento de una lista vacía"
+miHead (x:_)  = x

@@ -14,7 +14,18 @@ data MDD = MDD
         inicialMDD :: Estado,
         finalesMDD :: [Estado],
         finalesConEtiquetasMDD :: [(Estado, Etiqueta)]  
-    } deriving (Show)
+    } 
+
+instance Show MDD where
+    show mdd =
+        "Estados: " ++ show (estadosMDD mdd) ++ "\n" ++
+        "Alfabeto: " ++ show (alfabetoMDD mdd) ++ "\n" ++
+        "Transiciones:\n" ++ concatMap mostrarTransicion (transicionesMDD mdd) ++
+        "Estado inicial: " ++ show (inicialMDD mdd) ++ "\n" ++
+        "Estados finales: " ++ show (finalesMDD mdd) ++ "\n" ++
+        "Estados finales con etiquetas: " ++ show (finalesConEtiquetasMDD mdd)
+      where
+        mostrarTransicion (from, c, to) = "  " ++ show from ++ " -" ++ [c] ++ "-> " ++ show to ++ "\n"
 
 
 construyeMDD :: AFD -> MDD
@@ -32,18 +43,10 @@ asignaEtiquetas :: AFD -> [(Estado, Etiqueta)]
 asignaEtiquetas afd =
     let
         asignarEtiqueta estado
-            | estado == 1       = (estado, "Id")
-            | estado == 2       = (estado, "Entero")
-            | estado == 3       = (estado, "Asignacion")
             | estado == 4       = (estado, "OpArit")
-            | estado == 5       = (estado, "OpBool")
-            | estado == 6       = (estado, "PalabRes")
-            | estado == 7       = (estado, "Delimitadores")
-            | estado == 8       = (estado, "Espacios")
-            | estado == 9       = (estado, "ComenBloque")
-            | estado == 10      = (estado, "ComenLinea")
-        --     aquí debe haber más casos
-        --              ...
+            | estado == 3       = (estado, "Entero")
+            | estado == 0       = (estado, "Id")
+        --  aquí puede haber más casos
             | otherwise         = error "Esto no deberia pasar. Un estado final no debería ser final, al menos para IMP."
     in
         map asignarEtiqueta (finalesAfd afd)    
