@@ -17,7 +17,19 @@ data AFD = AFD
     , transicionesAfd :: [Transicion]
     , inicialAfd :: Int
     , finalesAfd :: [Int]}
-    deriving (Show)
+    
+    
+instance Show AFD where
+    show afd =
+        "========== AFD ==========\n"
+        ++ "Estados: " ++ show (estadosAfd afd) ++ "\n"
+        ++ "Alfabeto: " ++ show (alfabetoAfd afd) ++ "\n"
+        ++ "Transiciones:\n"
+        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [c] ++ "') = " ++ show e2
+                   | (e1, c, e2) <- transicionesAfd afd ]
+        ++ "Estado inicial: " ++ show (inicialAfd afd) ++ "\n"
+        ++ "Estados finales: " ++ show (finalesAfd afd) ++ "\n"
+        ++ "========================="
 
 {--
 Funcion principal que convierte un AFN a un AFD usando el conjunto potencia de los estados del AFN

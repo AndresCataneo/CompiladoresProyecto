@@ -17,7 +17,19 @@ data AFN = AFN
         transicionesAfn :: [Transiciones],
         inicialAfn :: Int, 
         finalesAfn :: [Int]
-    } deriving (Show)
+    } 
+    
+instance Show AFN where
+    show afn =
+        "========== AFN ==========\n"
+        ++ "Estados: " ++ show (estadosAfn afn) ++ "\n"
+        ++ "Alfabeto: " ++ show (alfabetoAfn afn) ++ "\n"
+        ++ "Transiciones:\n"
+        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [c] ++ "') = " ++ show e2s
+                   | (e1, c, e2s) <- transicionesAfn afn ]
+        ++ "Estado inicial: " ++ show (inicialAfn afn) ++ "\n"
+        ++ "Estados finales: " ++ show (finalesAfn afn) ++ "\n"
+        ++ "========================="
 
 
 {-

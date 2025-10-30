@@ -33,7 +33,22 @@ data AFNEp = AFNEp {estados :: [Estado],
         transiciones :: [TransEp], 
         inicial :: Estado, 
         final :: [Estado]}
-        deriving (Show)
+
+instance Show AFNEp where
+    show afnEp =
+        "======= AFN con Épsilon =======\n"
+        ++ "Estados: " ++ show (estados afnEp) ++ "\n"
+        ++ "Alfabeto: " ++ show (alfabeto afnEp) ++ "\n"
+        ++ "Transiciones:\n"
+        ++ unlines [ "  δ(" ++ show e1 ++ ", " ++ simbolo c ++ ") = " ++ show e2s
+                   | (e1, c, e2s) <- transiciones afnEp ]
+        ++ "Estado inicial: " ++ show (inicial afnEp) ++ "\n"
+        ++ "Estados finales: " ++ show (final afnEp) ++ "\n"
+        ++ "=============================="
+      where
+        simbolo :: Maybe Char -> String
+        simbolo Nothing  = "ε"
+        simbolo (Just c) = "'" ++ [c] ++ "'"
 
 --Traducción de expresiones regulares a AFN con transiciones epsilon
 {-
