@@ -1,6 +1,6 @@
 module MDD (MDD(..), construyeMDD) where
 
-import AFD 
+import AFD(AFD(..)) 
 
 type Etiqueta = String
 type Estado = Int
@@ -43,10 +43,16 @@ asignaEtiquetas :: AFD -> [(Estado, Etiqueta)]
 asignaEtiquetas afd =
     let
         asignarEtiqueta estado
-            | estado == 4       = (estado, "OpArit")
-            | estado == 3       = (estado, "Entero")
-            | estado == 0       = (estado, "Id")
-        --  aquí puede haber más casos
+            | estado == 1       = (estado, "Espacios")
+            | estado == 4       = (estado, "Delimitadores")
+            | estado == 10      = (estado, "OpArit")
+            | estado == 13      = (estado, "Entero")
+            | estado == 26      = (estado, "Id")
+            | estado == 56      = (estado, "Id")
+            | estado == 57      = (estado, "Id")
+            | estado == 60      = (estado, "Id")
+            | estado == 71      = (estado, "Id")
+            | estado == 74      = (estado, "Id")
             | otherwise         = error "Esto no deberia pasar. Un estado final no debería ser final, al menos para IMP."
     in
         map asignarEtiqueta (finalesAfd afd)    

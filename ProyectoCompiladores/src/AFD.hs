@@ -1,4 +1,4 @@
-module AFD (AFD(..), afnToAfd, construirAFD, mover) where
+module AFD (AFD(..), afnToAfd, construirAFD, mover, Transicion) where
 import AFN (AFN(..))
 import Data.List (sort, nub)
 import Data.Maybe (fromMaybe)

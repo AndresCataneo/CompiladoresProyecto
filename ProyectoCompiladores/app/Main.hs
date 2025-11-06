@@ -6,7 +6,8 @@ import System.Environment (getArgs)
 import Data.List (intercalate, dropWhileEnd, isPrefixOf)
 import AFN
 import AFD
-import AFDmin
+--import AFDmin
+import MinimizacionAFD(minimizarAFD)
 import Lexer (armaMDD, lexer)
 
 main :: IO ()
