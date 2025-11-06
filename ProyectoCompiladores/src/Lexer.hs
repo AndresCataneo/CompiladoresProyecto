@@ -103,6 +103,7 @@ crearToken estadoFinal lexema mdd =
                 | length lexema == 1 && miHead lexema `elem` delimitadores -> Delimitadores (miHead lexema)
                 | length lexema == 1 && miHead lexema `elem` operadoresAritmeticos -> OpArit (miHead lexema)
                 | length lexema == 1 && miHead lexema `elem` espacios -> Espacios (miHead lexema)
+                | lexema == ":=" -> Asignacion
                 | otherwise -> OpBool lexema --por si las dudas
             _ -> error $ "Etiqueta desconocida: " ++ etiqueta
 
