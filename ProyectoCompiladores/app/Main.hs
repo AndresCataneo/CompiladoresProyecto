@@ -3,7 +3,7 @@ module Main (main) where
 import Parser
 import AFNep
 import System.Environment (getArgs)
-import Data.List (intercalate, dropWhileEnd)
+import Data.List (intercalate, dropWhileEnd, isPrefixOf)
 import AFN
 import AFD
 import AFDmin
@@ -54,7 +54,8 @@ main = do
             putStrLn "========================================="
             
             -- Aplicar el lexer al código fuente
-            let tokensResultado = Lexer.lexer codigoFuente mdd
+            let codigoFuenteSinComentarios = quitarComentarios codigoFuente
+            let tokensResultado = Lexer.lexer codigoFuenteSinComentarios mdd
             putStrLn "\nTokens reconocidos:"
             putStrLn "========================================="
             mapM_ print tokensResultado
@@ -113,3 +114,19 @@ preprocesar contenido =
         resultado = intercalate "+" expresiones
     in
         resultado
+
+-- Elimina comentarios // de una línea
+quitarComentarioLinea :: String -> String
+quitarComentarioLinea = quitarDesde "//"
+  where
+    quitarDesde _ [] = []
+    quitarDesde patron str@(x:xs)
+      | patron `isPrefixOf` str = []
+      | otherwise = x : quitarDesde patron xs
+
+-- Elimina comentarios // de todo el archivo
+quitarComentarios :: String -> String
+quitarComentarios texto = 
+  let lineasOriginales = lines texto --Divide el string en una lista de líneas string
+      lineasProcesadas = map quitarComentarioLinea lineasOriginales --Quita los comentarios en cada elemento de la lista de lineas
+  in unlines lineasProcesadas --Convierte la lista de líneas en un solo string separado por saltos de línea
