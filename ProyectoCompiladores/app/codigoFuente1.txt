@@ -2,33 +2,33 @@
 
 { 
   // variables (Ids según: [a-z]+[A-Z])
-  sumB := 0;
-  nC := 10;
-  iA := 0;
-  flagD := true;
+  Bsum := 0;
+  Cn := 10;
+  Ai := 0;
+  Dflag := true;
 
   // ciclo for: acumulador de 0 a nC
-  for (iA := 0; iA <= nC; iA := iA + 1) {
-    sumB := sumB + iA;
+  for (Ai := 0; Ai <= Cn; Ai := Ai + 1) {
+    Bsum := Bsum + Ai;
   }
 
   // uso de if/then/else con operadores booleanos y comparaciones
-  if (sumB == 55 & flagD == true) then {
+  if (Bsum == 55 & Dflag == true) then {
     // comentario: mostramos resultado si la condición es verdadera
-    resultadoE := sumB;
+    Eresultado := Bsum;
   } else {
-    resultadoE := -1;
+    Eresultado := -1;
   }
 
   // while con operador lógico NOT (!)
-  contadorF := 5;
-  while (contadorF > 0) {
-    contadorF := contadorF - 1;
-    flagD := !flagD;
+  Fcontador := 5;
+  while (Fcontador <= 0) {
+    Fcontador := Fcontador - 1;
+    Dflag := !Dflag;
   }
 
   // operación aritmética mixta
-  valorG := (resultadoE * 2) / (nC + 1);
+  Gvalor := (Eresultado * 2) / (Cn + 1);
 
   // fin del bloque
 }

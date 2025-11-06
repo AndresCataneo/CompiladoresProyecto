@@ -43,8 +43,7 @@ asignaEtiquetas :: AFD -> [(Estado, Etiqueta)]
 asignaEtiquetas afd =
     let
         asignarEtiqueta estado
-            | estado == 1       = (estado, "Espacios")
-            | estado == 4       = (estado, "Delimitadores")
+            | estado == 1       = (estado, "OpBool")
             | estado == 10      = (estado, "OpArit")
             | estado == 13      = (estado, "Entero")
             | estado == 26      = (estado, "Id")

@@ -9,6 +9,7 @@ import AFD
 --import AFDmin
 import MinimizacionAFD(minimizarAFD)
 import Lexer (armaMDD, lexer)
+import MDD(construyeMDD)
 
 main :: IO ()
 main = do
@@ -42,7 +43,7 @@ main = do
             print afdmin
             
             -- Construir el MDD
-            let mdd = armaMDD ast
+            let mdd = construyeMDD afdmin
             putStrLn "\nMDD resultante:"
             print mdd
             
@@ -88,7 +89,7 @@ main = do
             putStrLn "\nAFD min resultante:"
             print afdmin
             
-            let mdd = armaMDD ast
+            let mdd = construyeMDD afdmin
             putStrLn "\nMDD resultante:"
             print mdd
             

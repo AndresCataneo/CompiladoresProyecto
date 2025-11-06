@@ -16,7 +16,7 @@ data Token = Id String
         | OpBool String
         | PalabRes String
         | Delimitadores Char
-        | Espacios String
+        | Espacios Char
         | ComenBloque String
         | ComenLinea String
         deriving (Show, Eq)
@@ -92,20 +92,18 @@ crearToken estadoFinal lexema mdd =
     case lookup estadoFinal (finalesConEtiquetasMDD mdd) of
         Nothing -> error $ "Estado final sin etiqueta: " ++ show estadoFinal
         Just etiqueta -> case etiqueta of
-            "Delimitadores"
-                --El hardcodeo
-                | lexema `elem` palabrasReservadas   -> PalabRes lexema
-                | lexema `elem` operadoresBooleanos   -> OpBool lexema
-                | lexema == ":="                     -> Asignacion
-                | lexema == "0"                      -> Entero 0
-                | length lexema == 1 && miHead lexema `elem` operadoresAritmeticos -> OpArit (miHead lexema)
-                | length lexema == 1 && miHead lexema `elem` ['a'..'z'] -> Id lexema
-                | length lexema == 1 && miHead lexema `elem` delimitadores -> Delimitadores (miHead lexema)
-                | otherwise -> Delimitadores (miHead lexema) --por si las dudas
             "Id"        ->  Id lexema
-            "Espacios"  ->  Espacios lexema
             "Entero"    ->  Entero (read lexema)
             "OpArit"    ->  OpArit (miHead lexema) 
+            "OpBool"
+                | length lexema == 1 && miHead lexema `elem` ['a'..'z'] ->  Id lexema
+                | lexema == "0" ->  Entero 0
+                | lexema `elem` palabrasReservadas  ->  PalabRes lexema
+                | lexema `elem` operadoresBooleanos -> OpBool lexema
+                | length lexema == 1 && miHead lexema `elem` delimitadores -> Delimitadores (miHead lexema)
+                | length lexema == 1 && miHead lexema `elem` operadoresAritmeticos -> OpArit (miHead lexema)
+                | length lexema == 1 && miHead lexema `elem` espacios -> Espacios (miHead lexema)
+                | otherwise -> OpBool lexema --por si las dudas
             _ -> error $ "Etiqueta desconocida: " ++ etiqueta
 
 -- Lista de palabras reservadas del lenguaje IMP
