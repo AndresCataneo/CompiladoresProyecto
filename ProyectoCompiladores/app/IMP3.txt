@@ -1,8 +1,0 @@
-Id = ([a-z]+[A-Z]([a-z]+[A-Z]+[0-9])*)
-Entero = (0 + ([1-9][0-9]*) + (-[1-9][0-9]*))
-Asignacion = (:\=)
-OpArit = (\+ + \- + \* + \/)
-OpBool = (& + | + ! + \=\= + <\= + true + false)
-PalabRes = (if + else + then + while + for)
-Delimitadores = ({ + } + \( + \) + ;)
-Espacios = (\ + \n + \t)

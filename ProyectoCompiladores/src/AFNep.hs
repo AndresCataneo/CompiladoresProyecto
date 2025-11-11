@@ -40,8 +40,8 @@ instance Show AFNEp where
         ++ "Estados: " ++ show (estados afnEp) ++ "\n"
         ++ "Alfabeto: " ++ show (alfabeto afnEp) ++ "\n"
         ++ "Transiciones:\n"
-        ++ unlines [ "  δ(" ++ show e1 ++ ", " ++ simbolo c ++ ") = " ++ show e2s
-                   | (e1, c, e2s) <- transiciones afnEp ]
+        ++ unlines [ "  δ(" ++ show e1 ++ ", " ++ simbolo s ++ ") = " ++ show e2
+                   | (e1, s, e2) <- transiciones afnEp ]
         ++ "Estado inicial: " ++ show (inicial afnEp) ++ "\n"
         ++ "Estados finales: " ++ show (final afnEp) ++ "\n"
         ++ "=============================="

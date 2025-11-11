@@ -6,45 +6,44 @@ import System.Environment (getArgs)
 import Data.List (intercalate, dropWhileEnd, isPrefixOf)
 import AFN
 import AFD
---import AFDmin
 import MinimizacionAFD(minimizarAFD)
-import Lexer (armaMDD, lexer)
+import Lexer 
 import MDD(construyeMDD)
 
 main :: IO ()
 main = do
     args <- getArgs
     case args of
+        -- Modo 1: procesar ER y tokenizar código fuente
         [filenameER, filenameInput] -> do
             -- Leer el archivo con las expresiones regulares
             contenidoER <- readFile filenameER
             let preproc = preprocesar contenidoER
             let tokens = Parser.lexer preproc  -- lexer del parser (para la ER)
+            -- Se obtienen las expresiones regulares
             let ast = parseRE tokens
             putStrLn "ER resultante:"
             print ast
             
+            -- Convertir ER a AFNE con transiciones epsilon
             let afne = reToAFNEp ast
-            putStrLn "\nAFNe resultante:"
             print afne 
-            putStrLn "El numero de estados del AFNe es:"
-            print (length (estados afne))
             
+            -- Eliminar transiciones epsilon
             let afn = eliminarEpsilonTrans afne
-            putStrLn "\nAFN resultante:"
             print afn
             
+            -- Convertir AFN a AFD
             let afd = afnToAfd afn
-            putStrLn "\nAFD no min resultante:"
             print afd
             
+            -- Minimizar el AFD
             let afdmin = minimizarAFD afd
-            putStrLn "\nAFD min resultante:"
+            putStrLn "\n========== AFD Mínimo ==========\n"
             print afdmin
             
             -- Construir el MDD
             let mdd = construyeMDD afdmin
-            putStrLn "\nMDD resultante:"
             print mdd
             
             -- Leer el archivo de entrada (código a tokenizar)
@@ -62,8 +61,9 @@ main = do
             putStrLn "========================================="
             mapM_ print tokensResultado
             
+        -- Modo 2: solo procesar ER
         [filename] -> do
-            -- Modo original: solo procesar las expresiones regulares
+    
             contenido <- readFile filename
             let preproc = preprocesar contenido
             let tokens = Parser.lexer preproc
@@ -72,28 +72,29 @@ main = do
             print ast
             
             let afne = reToAFNEp ast
-            putStrLn "AFNe resultante:"
-            print afne 
-            putStrLn "El numero de estados del AFNe es:"
-            print (length (estados afne))
+            print afne
             
             let afn = eliminarEpsilonTrans afne
-            putStrLn "AFN resultante:"
             print afn
             
             let afd = afnToAfd afn
-            putStrLn "\nAFD no min resultante:"
             print afd
             
             let afdmin = minimizarAFD afd
-            putStrLn "\nAFD min resultante:"
+            putStrLn "\n========== AFD Mínimo ==========\n"
             print afdmin
             
             let mdd = construyeMDD afdmin
-            putStrLn "\nMDD resultante:"
             print mdd
             
-        _ -> putStrLn "Uso:\n  compilador <archivoER.txt>  # Solo procesar ER\n  compilador <archivoER.txt> <archivoInput.txt>  # Procesar ER y tokenizar"
+        _ -> putStrLn $
+            "Uso:\n" ++
+            "  stack exec ProyectoCompiladores-exe app/IMP.txt  # Solo procesar ER\n" ++
+            "  stack exec ProyectoCompiladores-exe app/IMP.txt app/<archivoInput.txt>  # Procesar ER y tokenizar\n" ++
+            "\nEjemplo:\n" ++
+            "  stack exec ProyectoCompiladores-exe app/IMP.txt app/codigoFuente3.txt"
+
+
 
 -- Función auxiliar que elimina espacios en blanco al inicio y final de cada línea
 trim :: String -> String

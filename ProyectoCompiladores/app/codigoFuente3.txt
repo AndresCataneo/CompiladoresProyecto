@@ -1,0 +1,11 @@
+Aloja:=5+3;
+Hello:=true;
+a:=false|true;
+{x:=(5+1)*2;y:=(3-2)/(4+2)*-10}
+
+    while(c:=0;c<=10;c:=c+1){
+        Aloja:=Aloja+10;
+    }
+
+if(-3==a) then Hello:=false else !false;
+Que:=4--2;

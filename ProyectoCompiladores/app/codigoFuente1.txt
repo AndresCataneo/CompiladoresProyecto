@@ -1,6 +1,5 @@
 // Programa de ejemplo que cumple las regex dadas
-
-{ 
+{
   // variables (Ids según: [a-z]+[A-Z])
   Bsum := 0;
   Cn := 10;
@@ -29,6 +28,5 @@
 
   // operación aritmética mixta
   Gvalor := (Eresultado * 2) / (Cn + 1);
-
   // fin del bloque
 }

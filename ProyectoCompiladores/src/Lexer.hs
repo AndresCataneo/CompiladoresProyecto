@@ -1,14 +1,16 @@
+-- Declaración del módulo Lexer
 module Lexer(Token(..), lexer, armaMDD) where
 
+-- Importamos módulos necesarios
 import RE
 import AFNep
 import AFN
 import AFD
---import AFDmin
 import MDD
-import Debug.Trace (trace)
 import MinimizacionAFD
 
+
+-- Definimos el tipo de dato algebraico Token
 data Token = Id String
         | Entero Int
         | Asignacion 
@@ -21,112 +23,136 @@ data Token = Id String
         | ComenLinea String
         deriving (Show, Eq)
 
--- Construye el MDD a partir de una expresión regular
+
+-- Función que recibe una expresión regular y devuelve la MDD correspondiente
 armaMDD :: RE -> MDD
 armaMDD re = (construyeMDD (minimizarAFD (afnToAfd (eliminarEpsilonTrans (reToAFNEp re)))))
 
--- Función principal del lexer
--- Recibe el código fuente y retorna una lista de tokens
+
+{-
+    Función lexer
+        Toma el código fuente y una MDD, y devuelve una lista de los
+    tokens encontrados.
+        Si el código fuente tiene un error léxico, se lanza un error.
+        Se utiliza la función auxLexer como función auxiliar.
+-}
 lexer :: String -> MDD -> [Token]
 lexer [] _ = []
-lexer input mdd = 
-    case maximalMunch mdd input of
-        Nothing -> error $ "Error léxico: no se pudo reconocer token en: " ++ take 20 input
+lexer codigoFuente mdd = 
+    case auxLexer mdd codigoFuente of
+        Nothing -> error $ "Error léxico: no se pudo reconocer token en: " ++ take 20 codigoFuente
         Just (token, resto) -> token : lexer resto mdd
    
 
--- Implementación del algoritmo de Maximal Munch con retroceso
-maximalMunch :: MDD -> String -> Maybe (Token, String)
-maximalMunch mdd input = 
-    runMDD mdd input (inicialMDD mdd) Nothing 0 0
+{-
+    Función auxiliar del lexer.
+        Recibe una MDD y el código fuente, y devuelve el siguiente token reconocido,
+    junto con el resto del código fuente que aún no ha sido procesado.
+        Si no reconoce ningún token, devuelve Nothing, y así el lexer lanzaría 
+    un error.
+        Se manda a llamar una función auxiliar que realiza el algoritmo de Maximal 
+    Munch. Se le pasan parámetros extras necesarios para realizarlo:
 
--- Ejecuta el MDD con la política de maximal munch
--- Estados: estadoActual, ultimoEstadoFinal, posicionUltimoFinal, posicionActual
-runMDD :: MDD -> String -> Int -> Maybe (Int, Int) -> Int -> Int -> Maybe (Token, String)
-runMDD mdd input estadoActual ultimoFinal posUltimoFinal posActual
-    -- Si ya no hay más entrada
-    | posActual >= length input =
-        case ultimoFinal of
-            Nothing -> Nothing  -- No se reconoció ningún token
-            Just (estadoFinal, pos) -> 
-                let lexema = take pos input
-                    resto = drop pos input
-                in Just (crearToken estadoFinal lexema mdd, resto)
-    
-    -- Si hay más entrada, intentamos seguir
+        - El estado actual del MDD (inicialmente el estado inicial)
+        - El último estado final alcanzado (inicialmente ninguno, -1)
+
+        - El índice de la posición actual en el código fuente (inicialmente 0)
+        - El índice de la posición en el código fuente de donde se alcanzó el último estado final (inicialmente 0)
+-} 
+auxLexer :: MDD -> String -> Maybe (Token, String)
+auxLexer mdd codigoFuente = maximalMunch mdd codigoFuente (inicialMDD mdd) (-1) 0 0 
+
+
+{-
+    Función que recorre la MDD según el algoritmo de Maximal Munch.
+        Recibe la MDD, el código fuente, el estado actual, el último estado final alcanzado, 
+    la posición actual en el código fuente y la posición en el código fuente de donde se alcanzó 
+    el último estado final.
+        Devuelve el token reconocido y el resto del código fuente aún no analizado. O devuelve
+    Nothing si no se reconoce ningún token.
+-}
+maximalMunch :: MDD -> String -> Int -> Int -> Int -> Int -> Maybe (Token, String)
+maximalMunch mdd codigoFuente estadoActual ultimoEstadoFinal indiceActual indiceUltimoEstadoFinal
+    -- Cuando aún hay código fuente que procesar
+    | indiceActual < length codigoFuente =
+        let simboloActual = codigoFuente !! indiceActual    -- Se obtiene el símbolo actual
+            siguienteEstado = siguienteEstadoMDD mdd estadoActual simboloActual -- Se obtiene el siguiente estado
+        in case siguienteEstado of
+            Nothing -> -- Cuando no hay siguiente estado, la MDD se trabó
+                case ultimoEstadoFinal of
+                    -1  ->  Nothing -- Si se trabó sin pasar por un estado final, no se encontró ningún token y se manda error
+                    _   ->  Just(creaToken ultimoEstadoFinal tokenCrudo mdd, restoCodigoFuente) -- Se devuelve el token reconocido hasta el último estado final
+                        where
+                            tokenCrudo = take indiceUltimoEstadoFinal codigoFuente  -- Se obtiene el token crudo directo del código fuente, posteriormente se convierte en tipo Token
+                            restoCodigoFuente = drop indiceUltimoEstadoFinal codigoFuente   -- Se obtiene el resto del codigo fuente que no ha sido procesado aún
+            Just nuevoEstado -> -- Cuando se encontró un siguiente estado en la MDD
+                -- Se hace recursión actualizando los estados y los índices
+                maximalMunch mdd codigoFuente nuevoEstado nuevoUltimoEstadoFinal nuevoIndiceActual nuevoIndiceUltimoEstadoFinal
+                where
+                    nuevoIndiceActual = indiceActual + 1
+                    nuevoUltimoEstadoFinal = if nuevoEstado `elem` finalesMDD mdd then nuevoEstado else ultimoEstadoFinal
+                    nuevoIndiceUltimoEstadoFinal = if nuevoEstado `elem` finalesMDD mdd then nuevoIndiceActual else indiceUltimoEstadoFinal
+    -- Cuando ya no hay código fuente que procesar
     | otherwise =
-        let char = input !! posActual
-            siguienteEdo = siguienteEstadoMDD mdd estadoActual char
-        in case siguienteEdo of
-            Nothing -> -- No hay transición, retrocedemos
-                case ultimoFinal of
-                    Nothing -> Nothing
-                    Just (estadoFinal, pos) ->
-                        let lexema = take pos input
-                            resto = drop pos input
-                        in Just (crearToken estadoFinal lexema mdd, resto)
-            
-            Just nuevoEstado ->
-                let nuevaPosicion = posActual + 1
-                    -- Verificamos si el nuevo estado es final
-                    nuevoUltimoFinal = 
-                        if nuevoEstado `elem` finalesMDD mdd
-                        then Just (nuevoEstado, nuevaPosicion)
-                        else ultimoFinal
-                    nuevaPosUltimoFinal = 
-                        if nuevoEstado `elem` finalesMDD mdd
-                        then nuevaPosicion
-                        else posUltimoFinal
-                in runMDD mdd input nuevoEstado nuevoUltimoFinal nuevaPosUltimoFinal nuevaPosicion
+        case ultimoEstadoFinal of
+            -1  ->  Nothing -- Si nunca se pasó por un estado final, no se encontró ningún token y se manda error
+            -- Se devuelve el último token reconocido
+            _   ->  Just(creaToken ultimoEstadoFinal tokenCrudo mdd, restoCodigoFuente) 
+                where
+                    tokenCrudo = take indiceUltimoEstadoFinal codigoFuente
+                    restoCodigoFuente = drop indiceUltimoEstadoFinal codigoFuente
+    
 
--- Busca la siguiente transición en el MDD
-siguienteEstadoMDD :: MDD -> Int -> Char -> Maybe Int
-siguienteEstadoMDD mdd estado char =
-    case filter (\(o, c, _) -> o == estado && c == char) (transicionesMDD mdd) of
-        [] -> Nothing
-        ((_, _, destino):_) -> Just destino --por si llegara a haber más de una transición
-
--- Crea un token basado en el estado final y el lexema
-crearToken :: Int -> String -> MDD -> Token
-crearToken estadoFinal lexema mdd =
+{-
+    Crea un token a partir de un estado final, un token crudo y la MDD.
+        Se busca la etiqueta del estado final en la MDD y se crea el token correspondiente.
+        En caso de que el estado pueda producir más de un token, se verifica qué etiqueta le 
+    corresponde al token crudo.
+-}
+creaToken :: Int -> String -> MDD -> Token
+creaToken estadoFinal token mdd =
     case lookup estadoFinal (finalesConEtiquetasMDD mdd) of
-        Nothing -> error $ "Estado final sin etiqueta: " ++ show estadoFinal
-        Just etiqueta -> case etiqueta of
-            "Id"        ->  Id lexema
-            "Entero"    ->  Entero (read lexema)
-            "OpArit"    ->  OpArit (miHead lexema) 
+        Nothing ->  error $ "Estado sin etiqueta (estado no final): " ++ show estadoFinal
+        Just etiqueta   ->  case etiqueta of
+            "Id"        ->  Id token
+            "Entero"    ->  Entero (read token)
+            "OpArit"    ->  OpArit (primerElemento token) 
             "OpBool"
-                | length lexema == 1 && miHead lexema `elem` ['a'..'z'] ->  Id lexema
-                | lexema == "0" ->  Entero 0
-                | lexema `elem` palabrasReservadas  ->  PalabRes lexema
-                | lexema `elem` operadoresBooleanos -> OpBool lexema
-                | length lexema == 1 && miHead lexema `elem` delimitadores -> Delimitadores (miHead lexema)
-                | length lexema == 1 && miHead lexema `elem` operadoresAritmeticos -> OpArit (miHead lexema)
-                | length lexema == 1 && miHead lexema `elem` espacios -> Espacios (miHead lexema)
-                | lexema == ":=" -> Asignacion
-                | otherwise -> OpBool lexema --por si las dudas
+                | length token == 1 && primerElemento token `elem` ['a'..'z'] -> Id token
+                | token == "0" ->  Entero 0
+                | token `elem` palabrasReservadas -> PalabRes token
+                | token `elem` operadoresBooleanos -> OpBool token
+                | length token == 1 && primerElemento token `elem` delimitadores -> Delimitadores (primerElemento token)
+                | length token == 1 && primerElemento token `elem` operadoresAritmeticos -> OpArit (primerElemento token)
+                | length token == 1 && primerElemento token `elem` espacios -> Espacios (primerElemento token)
+                | token == ":=" -> Asignacion
+                | otherwise -> OpBool token --por si las dudas
             _ -> error $ "Etiqueta desconocida: " ++ etiqueta
 
--- Lista de palabras reservadas del lenguaje IMP
+-- Lista de palabras reservadas
 palabrasReservadas :: [String]
 palabrasReservadas = ["if", "then", "else", "while", "for"]
 
--- Lista de operadores booleanos del lenguaje IMP
+-- Lista de operadores booleanos
 operadoresBooleanos :: [String]
 operadoresBooleanos = ["<=", "==", "|", "&", "!", "true", "false"]
 
+-- Lista de operadores aritméticos
 operadoresAritmeticos :: [Char]
 operadoresAritmeticos = ['+', '-', '*', '/']
 
+-- Lista de delimitadores
 delimitadores :: [Char]
 delimitadores = [';', '(', ')', '{', '}']
 
+-- Lista de espacios
 espacios :: [Char]
 espacios = [' ', '\t', '\n']
 
-identificadoresDeEaZ :: [Char]
-identificadoresDeEaZ = ['e'..'z'] 
-
-miHead :: [a] -> a
-miHead []     = error "Error: se intentó obtener el primer elemento de una lista vacía"
-miHead (x:_)  = x
+{-
+    Función auxiliar para obtener el primer elemento de una lista.
+    Útil para convertir un String "x" en un Char 'x'.
+-} 
+primerElemento :: [a] -> a
+primerElemento []     = error "Error: se intentó obtener el primer elemento de una lista vacía"
+primerElemento (x:_)  = x

@@ -1,10 +1,8 @@
 module MinimizacionAFD(minimizarAFD) where
 
-import Data.List (nub, (\\))
+import Data.List (nub)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
-import Data.Set (Set)
-import qualified Data.Set as Set
 import AFD(AFD(..), Transicion)
 
 
@@ -31,7 +29,7 @@ construirMapaTransiciones = foldr insertarTransicion Map.empty
 obtenerTransicion :: MapaTransiciones -> Int -> Char -> Maybe Int
 obtenerTransicion mapa estado simbolo = Map.lookup (estado, simbolo) mapa
 
--- Paso 1: Inicializar tabla (marcar pares final vs no-final)
+-- Inicializar tabla (marcar pares final vs no-final)
 inicializarTabla :: [Int] -> [Int] -> TablaDistinguibilidad
 inicializarTabla estados finales = Map.fromList [
     (crearPar s1 s2, esFinal s1 /= esFinal s2)
@@ -40,7 +38,7 @@ inicializarTabla estados finales = Map.fromList [
   where
     esFinal s = s `elem` finales
 
--- Paso 2: Marcado iterativo
+-- Marcado iterativo
 marcarDistinguibles :: TablaDistinguibilidad -> [Int] -> [Char] -> MapaTransiciones -> TablaDistinguibilidad
 marcarDistinguibles tabla estados alfabeto mapaTransiciones = 
     if tabla == nuevaTabla
@@ -74,7 +72,7 @@ marcarDistinguibles tabla estados alfabeto mapaTransiciones =
                 then False
                 else Map.findWithDefault False (crearPar t1 t2) t
 
--- Paso 3: Crear particiones (estados equivalentes)
+-- Crear particiones (estados equivalentes)
 -- Union-Find para agrupar estados
 type UnionFind = Map Int Int
 
@@ -116,9 +114,9 @@ crearParticiones estados tabla = Map.elems grupos
         let (repr, _) = find ufFinal estado
         in Map.insertWith (++) repr [estado] acc
 
--- Paso 4: Construir AFD minimizado
+-- Construir AFD minimizado
 minimizarAFD :: AFD -> AFD
-minimizarAFD afd@(AFD estados alfabeto transiciones inicial finales) =
+minimizarAFD (AFD estados alfabeto transiciones inicial finales) =
     let mapaTransiciones = construirMapaTransiciones transiciones
         tablaInicial = inicializarTabla estados finales
         tablaFinal = marcarDistinguibles tablaInicial estados alfabeto mapaTransiciones
@@ -126,11 +124,11 @@ minimizarAFD afd@(AFD estados alfabeto transiciones inicial finales) =
         
         -- Mapear cada estado antiguo a su representante
         mapaRepresentante = Map.fromList [
-            (e, head grupo) | grupo <- particiones, e <- grupo
+            (e, primerElemento grupo) | grupo <- particiones, e <- grupo
             ]
         
         -- Nuevos estados (representantes)
-        nuevosEstados = map head particiones
+        nuevosEstados = map primerElemento particiones
         
         -- Nuevo estado inicial
         nuevoInicial = mapaRepresentante Map.! inicial
@@ -145,3 +143,10 @@ minimizarAFD afd@(AFD estados alfabeto transiciones inicial finales) =
             ]
     in AFD nuevosEstados alfabeto nuevasTransiciones nuevoInicial nuevosFinales
 
+{-
+    Función auxiliar para obtener el primer elemento de una lista.
+    Útil para convertir un String "x" en un Char 'x'.
+-} 
+primerElemento :: [a] -> a
+primerElemento []     = error "Error: se intentó obtener el primer elemento de una lista vacía"
+primerElemento (x:_)  = x

@@ -25,8 +25,8 @@ instance Show AFN where
         ++ "Estados: " ++ show (estadosAfn afn) ++ "\n"
         ++ "Alfabeto: " ++ show (alfabetoAfn afn) ++ "\n"
         ++ "Transiciones:\n"
-        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [c] ++ "') = " ++ show e2s
-                   | (e1, c, e2s) <- transicionesAfn afn ]
+        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [s] ++ "') = " ++ show e2
+                   | (e1, s, e2) <- transicionesAfn afn ]
         ++ "Estado inicial: " ++ show (inicialAfn afn) ++ "\n"
         ++ "Estados finales: " ++ show (finalesAfn afn) ++ "\n"
         ++ "========================="

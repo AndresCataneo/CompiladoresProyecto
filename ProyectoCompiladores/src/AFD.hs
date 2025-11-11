@@ -25,8 +25,8 @@ instance Show AFD where
         ++ "Estados: " ++ show (estadosAfd afd) ++ "\n"
         ++ "Alfabeto: " ++ show (alfabetoAfd afd) ++ "\n"
         ++ "Transiciones:\n"
-        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [c] ++ "') = " ++ show e2
-                   | (e1, c, e2) <- transicionesAfd afd ]
+        ++ unlines [ "  δ(" ++ show e1 ++ ", '" ++ [s] ++ "') = " ++ show e2
+                   | (e1, s, e2) <- transicionesAfd afd ]
         ++ "Estado inicial: " ++ show (inicialAfd afd) ++ "\n"
         ++ "Estados finales: " ++ show (finalesAfd afd) ++ "\n"
         ++ "========================="
@@ -111,44 +111,3 @@ mover afn estados simbolo =
                     , edoDest <- edosAct
                     ]
     in nub (sort destinos)
---Prueba (0+1)*01
---AFN
-{--afn1 = AFN {
-    estadosAfn = [0,1,2],
-    alfabetoAfn = ['0','1'],
-    transicionesAfn = [
-        (0,'0',[0]),
-        (0,'1',[0]),
-        (0,'0',[1]),
-        (1,'1',[2])
-    ],
-    inicialAfn = 0,
-    finalesAfn = [2]
-}
---}
---AFD
---afd1 = afnToAfd afn1
-
---Prueba2 (0+1)*1(((0+1)(0+1))+0)
---AFN
-{--
-afn2 = AFN {
-    estadosAfn = [0,1,2,3],
-    alfabetoAfn = ['0','1'],
-    transicionesAfn = [
-        (0,'0',[0]),
-        (0,'1',[0]),
-        (0,'1',[1]),
-        (1,'0',[2]),
-        (1,'1',[2]),
-        (1,'0',[3]),
-        (2,'0',[3]),
-        (2,'1',[3])
-    ],
-    inicialAfn = 0,
-    finalesAfn = [3]
-}
---}
-
---AFD
---afd2 = afnToAfd afn2
