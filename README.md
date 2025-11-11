@@ -21,5 +21,5 @@ stack build
 ## Ejecución
 Desde la raíz del proyecto (`CompiladoresProyecto/ProyectoCompiladores`), ejecutar:
 ```bash
-stack exec ProyectoCompiladores-exe app/IMP.txt
+stack exec ProyectoCompiladores-exe app/IMP.txt app/codigoFuente3.txt
 ```
